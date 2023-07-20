@@ -61,17 +61,17 @@
 
     - name: Postavljanje mastodona ownera na /var/lib/mastodon
       become: yes
-      command: sudo chown mastodon:mastodon -R /var/lib/mastodon .
+      command: sudo chown mastodon:mastodon -R /var/lib/mastodon
 
-    - name: Postavljanje mastodon konfiguracije u /var/lib/mastodon/.env.production
-      become: yes
-      command: cp /home/gaser/AnsibleScriptsMastodon/podesavanja/konfiguracija.mastodon /var/lib/mastodon/.env.production
+        #    - name: Postavljanje mastodon konfiguracije u /var/lib/mastodon/.env.production
+        #      become: yes
+        #      command: cp /home/gaser/AnsibleScriptsMastodon/podesavanja/konfiguracija.mastodon /var/lib/mastodon/.env.production
 
-    - name: Compile Mastodon assets
-      become: yes
-      command: "sudo -u mastodon RAILS_ENV=production NODE_OPTIONS=--openssl-legacy-provider bundle exec rails assets:precompile"
-      args:
-        chdir: /var/lib/mastodon
+        #    - name: Compile Mastodon assets
+        #      become: yes
+        #      command: "sudo -u mastodon RAILS_ENV=production NODE_OPTIONS=--openssl-legacy-provider bundle exec rails assets:precompile"
+        #      args:
+        #        chdir: /var/lib/mastodon
 
     - name: Preuzmi nginx
       become: yes
@@ -104,8 +104,8 @@
       become: yes
       command: sudo systemctl restart nginx
 
-    - name: Pokreni mastodon
-      become: yes
-      command: systemctl enable mastodon.target
-      command: systemctl start mastodon.target
+        #    - name: Pokreni mastodon
+        #      become: yes
+        #      command: systemctl enable mastodon.target
+        #      command: systemctl start mastodon.target
 
