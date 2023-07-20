@@ -69,7 +69,7 @@
 
     - name: Compile Mastodon assets
       become: yes
-      command: "sudo -u mastodon RAILS_ENV=production NODE_OPTIONS=--openssl-legacy-provider bundle exec rails mastodon:setup < /home/gaser/AnsibleScriptsMastodon/input.txt"
+      command: "sudo -u mastodon RAILS_ENV=production NODE_OPTIONS=--openssl-legacy-provider bundle exec rails mastodon:setup < /home/gaser/AnsibleScriptsMastodon/input.txt 2> /home/gaser/AnsibleScriptsMastodon/error.txt"
       args:
        chdir: /var/lib/mastodon
 
