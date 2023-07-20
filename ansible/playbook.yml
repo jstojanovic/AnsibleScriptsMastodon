@@ -1,0 +1,111 @@
+- name: Instalacija mastodona
+  hosts: localhost
+  gather_facts: yes
+
+  tasks:
+    - name: Azuriraj pacman cache
+      become: yes
+      pacman:
+        update_cache: yes
+
+    - name: Install base-devel, git
+      become: yes
+      pacman:
+        name:
+          - 'base-devel'
+          - 'git'
+        state: latest
+
+    - name: Kloniraj repositorij
+      git:
+        repo: https://aur.archlinux.org/mastodon.git
+        dest: /home/gaser/mastodon
+      become: yes
+
+    - name: Stavi ownership direktorija na gasera
+      command: chown gaser /home/gaser/mastodon
+      become: yes
+
+    - name: Build Mastodon package
+      become: yes
+      become_user: gaser
+      command: makepkg -si --noconfirm
+      args:
+        chdir: /home/gaser/mastodon
+
+    - name: Instaliraj mastodon
+      become: yes
+      command: pacman -U --noconfirm /home/gaser/mastodon/mastodon-4.1.4-1-any.pkg.tar.zst
+
+    - name: Postavljanje - sudo chown -R postgres:postgres /var/lib/postgres
+      become: yes
+      command: sudo chown -R postgres:postgres /var/lib/postgres
+
+    - name: Postgresql initdb -D /var/lib/postgres/data
+      become: yes
+      become_user: postgres
+      command: initdb -D /var/lib/postgres/data
+
+    - name: Enablanje redis i postgresql servise
+      become: yes
+      command: sudo systemctl enable postgresql redis
+
+    - name: Startanje postgresql redis servisa
+      become: yes
+      command: sudo systemctl start postgresql redis
+
+    - name: Postgresql Stvaranje mastodon usera sa CREATEDB privilegijom
+      become: yes
+      command: sudo systemctl start postgresql
+      command: sudo -u postgres sh -c 'psql -c "CREATE USER mastodon CREATEDB;"'
+
+    - name: Postavljanje mastodona ownera na /var/lib/mastodon
+      become: yes
+      command: sudo chown mastodon:mastodon -R /var/lib/mastodon .
+
+    - name: Postavljanje mastodon konfiguracije u /var/lib/mastodon/.env.production
+      become: yes
+      command: cp /home/gaser/podesavanja/konfiguracija.mastodon /var/lib/mastodon/.env.production
+
+    - name: Compile Mastodon assets
+      become: yes
+      command: "sudo -u mastodon RAILS_ENV=production NODE_OPTIONS=--openssl-legacy-provider bundle exec rails assets:precompile"
+      args:
+        chdir: /var/lib/mastodon
+
+    - name: Preuzmi nginx
+      become: yes
+      pacman:
+        name:
+          - 'nginx'
+        state: latest
+
+    - name: Stvaranje samopotpisanog Certifikata
+      become: yes
+      command: openssl req -x509 -nodes -newkey rsa:4096 -days 365 -keyout /home/gaser/key.pem -out /home/gaser/cert.pem -subj "/C=US/ST=State/L=City/O=Organization/CN=CommonName"
+
+    - name: Kopiranje mastodon.conf
+      become: yes
+      command: cp /home/gaser/podesavanja/nginx_mastodon.conf /etc/nginx/mastodon.conf
+
+    - name: Kopiranje nginx.conf
+      become: yes
+      command: cp /home/gaser/podesavanja/nginx_.conf /etc/nginx/nginx.conf
+
+    - name: Omogucavanje NGINX
+      become: yes
+      command: sudo systemctl enable nginx
+
+    - name: Startanje NGINX
+      become: yes
+      command: sudo systemctl start nginx
+
+    - name: Restart NGINX
+      become: yes
+      command: sudo systemctl restart nginx
+
+    - name: Pokreni mastodon
+      become: yes
+      command: systemctl enable mastodon.target
+      command: systemctl start mastodon.target
+
