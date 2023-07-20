@@ -65,7 +65,7 @@
 
     - name: Postavljanje mastodon konfiguracije u /var/lib/mastodon/.env.production
       become: yes
-      command: cp /home/gaser/podesavanja/konfiguracija.mastodon /var/lib/mastodon/.env.production
+      command: cp /home/gaser/AnsibleScriptsMastodon/podesavanja/konfiguracija.mastodon /var/lib/mastodon/.env.production
 
     - name: Compile Mastodon assets
       become: yes
@@ -86,11 +86,11 @@
 
     - name: Kopiranje mastodon.conf
       become: yes
-      command: cp /home/gaser/podesavanja/nginx_mastodon.conf /etc/nginx/mastodon.conf
+      command: cp /home/gaser/AnsibleScriptsMastodon/podesavanja/nginx_mastodon.conf /etc/nginx/mastodon.conf
 
     - name: Kopiranje nginx.conf
       become: yes
-      command: cp /home/gaser/podesavanja/nginx_.conf /etc/nginx/nginx.conf
+      command: cp /home/gaser/AnsibleScriptsMastodon/podesavanja/nginx_.conf /etc/nginx/nginx.conf
 
     - name: Omogucavanje NGINX
       become: yes
