@@ -67,11 +67,11 @@
         #      become: yes
         #      command: cp /home/gaser/AnsibleScriptsMastodon/podesavanja/konfiguracija.mastodon /var/lib/mastodon/.env.production
 
-    - name: Compile Mastodon assets
-      become: yes
-      command: "sudo -u mastodon RAILS_ENV=production NODE_OPTIONS=--openssl-legacy-provider bundle exec rails mastodon:setup < /home/gaser/AnsibleScriptsMastodon/input.txt 2> /home/gaser/AnsibleScriptsMastodon/error.txt"
-      args:
-       chdir: /var/lib/mastodon
+        #    - name: Compile Mastodon assets
+        #      become: yes
+        #      command: "sudo -u mastodon RAILS_ENV=production NODE_OPTIONS=--openssl-legacy-provider bundle exec rails mastodon:setup < /home/gaser/AnsibleScriptsMastodon/input.txt 2> /home/gaser/AnsibleScriptsMastodon/error.txt"
+        #      args:
+        #       chdir: /var/lib/mastodon
 
     - name: Preuzmi nginx
       become: yes
